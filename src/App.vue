@@ -1,32 +1,37 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <a-config-provider :locale="locale">
+    <div id="app">
+      <router-view />
     </div>
-    <router-view />
-  </div>
+  </a-config-provider>
 </template>
 
-<style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 
-#nav {
-  padding: 30px;
+import { Component, Prop } from 'vue-property-decorator'
+import AppDeviceEnquire from '@/shared/mixins/app-device-enquire'
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+@Component({
+  components: {}
+})
+export default class App extends AppDeviceEnquire {
+  @Prop({ type: Number, default: 0 })
+  private height!: number
+  @Prop({ type: Number, default: 0 })
+  private width!: number
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+  private locale: any = zhCN
+
+  constructor() {
+    super()
   }
+
+  mounted() {}
+}
+</script>
+<style>
+#app {
+  height: 100%;
 }
 </style>

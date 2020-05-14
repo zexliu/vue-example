@@ -1,11 +1,24 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from 'vue'
+import Vuex from 'vuex'
 
-Vue.use(Vuex);
+import app from './modules/app'
+// import user from './modules/user';
+// import asyncRouter from './modules/async-router'
+// import permission from './modules/permission';
+import getters from './getters'
+import { RootState } from '@/interfaces/store-interface'
 
-export default new Vuex.Store({
+Vue.use(Vuex)
+
+export default new Vuex.Store<RootState>({
+  modules: {
+    app
+    // user,
+    // asyncRouter,
+    // permission
+  },
   state: {},
   mutations: {},
   actions: {},
-  modules: {}
-});
+  getters: getters
+})
