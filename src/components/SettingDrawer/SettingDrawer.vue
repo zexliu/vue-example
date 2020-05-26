@@ -262,7 +262,7 @@
             <span slot="message">
               配置栏只在开发环境用于预览，生产环境不会展现，请手动修改配置文件
               <a
-                href="https://github.com/ArcherTrister/ant-design-pro-vue-ts/blob/master/src/configs/defaultSettings.ts"
+                href="https://github.com//ant-design-pro-vue-ts/blob/master/src/configs/defaultSettings.ts"
                 target="_blank"
                 >src/configs/defaultSettings.ts</a
               >
@@ -309,8 +309,6 @@ export default class SettingDrawerComponent extends MixinDevice {
       vm.visible = false
     }, 16)
     // 当主题色不是默认色时，才进行主题编译
-    console.log(this.primaryColor)
-    console.log(config)
     if (this.primaryColor !== config.primaryColor) {
       updateTheme(this.primaryColor)
     }

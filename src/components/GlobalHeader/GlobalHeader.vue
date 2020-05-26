@@ -24,6 +24,7 @@
           />
           <user-menu />
         </div>
+
         <div v-else :class="['top-nav-header-index', theme]">
           <div class="header-index-wide">
             <div class="header-index-left">

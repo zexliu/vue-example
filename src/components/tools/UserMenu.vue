@@ -1,7 +1,7 @@
 <template>
   <div class="user-wrapper">
     <div class="content-box">
-      <a href="https://pro.lxking.cn/docs/getting-started" target="_blank">
+      <a href="https://github.com/zexliu" target="_blank">
         <span class="action">
           <a-icon type="question-circle-o" />
         </span>

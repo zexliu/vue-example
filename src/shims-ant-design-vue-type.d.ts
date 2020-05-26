@@ -4,7 +4,7 @@ import { Form } from 'ant-design-vue/types/form/form'
 import { message, Modal, notification } from 'ant-design-vue'
 // import VueClipboard from 'vue-clipboard2'
 
-declare module '' {
+declare module 'vue/types/vue' {
   interface Vue {
     $message: Message
     $form: Form

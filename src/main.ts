@@ -3,12 +3,17 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import { VueAxios } from './utils/request'
 
 import bootstrap from './core/bootstrap'
 import './core/lazy_use'
 import './components/global.less'
+import './permission' // permission control
 
 Vue.config.productionTip = false
+
+// mount axios Vue.$http and this.$http
+Vue.use(VueAxios)
 new Vue({
   router,
   store,

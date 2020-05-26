@@ -1,5 +1,11 @@
-// import { constantRouterMap } from '@/router/async-router-map'
-// import { ActionContext, ActionTree, GetterTree, Module, MutationTree } from 'vuex'
+// import { constantRouterMap } from '@/config/router.config'
+// import {
+//   ActionContext,
+//   ActionTree,
+//   GetterTree,
+//   Module,
+//   MutationTree
+// } from 'vuex'
 // import { RootState, IPermission } from '@/interfaces/store-interface'
 // import { generatorDynamicRouter } from '@/router/generator-routers'
 
@@ -14,7 +20,7 @@
 //   GenerateRoutes({ commit }, data) {
 //     return new Promise(resolve => {
 //       const { token } = data
-//       generatorDynamicRouter(token).then(routers => {
+//       generatorDynamicRouter(token).then((routers: any[]) => {
 //         commit('SET_ROUTERS', routers)
 //         resolve()
 //       })

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import store from '@/store/'
 import {
   ACCESS_TOKEN,
+  REFRESH_TOKEN,
   DEFAULT_COLOR,
   DEFAULT_THEME,
   DEFAULT_LAYOUT_MODE,
@@ -52,7 +53,8 @@ export default function Initializer() {
     'app/TOGGLE_MULTI_TAB',
     Vue.ls.get(DEFAULT_MULTI_TAB, config.multiTab)
   )
-  store.commit('user/SET_TOKEN', Vue.ls.get(ACCESS_TOKEN))
+  store.commit('user/SET_ACCESS_TOKEN', Vue.ls.get(ACCESS_TOKEN))
+  store.commit('user/SET_REFRESH_TOKEN', Vue.ls.get(REFRESH_TOKEN))
 
   // last step
 }

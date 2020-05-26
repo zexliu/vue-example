@@ -15,12 +15,15 @@ export interface IAppState {
 }
 
 export interface IUserState {
-  token: string
+  accessToken: string
+  refreshToken: string
   name: string
   welcome: string
   avatar: string
   roles: any[]
+  permissions: any[]
   info: any
+  id: string
 }
 
 export interface IPermission {

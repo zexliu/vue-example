@@ -1,11 +1,8 @@
 <template>
   <div class="footer">
     <div class="links">
-      <a href="https://pro.lxking.cn/" target="_blank">Pro 首页</a>
-      <a
-        href="https://github.com/ArcherTrister/ant-design-pro-vue-ts"
-        target="_blank"
-      >
+      <a href="https://github.com/zexliu" target="_blank">Pro 首页</a>
+      <a href="https://github.com/zexliu" target="_blank">
         <a-icon type="github" />
       </a>
       <a href="https://ant.design/">Ant Design</a>
@@ -13,7 +10,7 @@
     </div>
     <div class="copyright">
       Copyright
-      <a-icon type="copyright" /> 2018 <span>ArcherTrister出品</span>
+      <a-icon type="copyright" /> 2020 <span>Zex出品</span>
     </div>
   </div>
 </template>

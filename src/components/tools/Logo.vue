@@ -18,7 +18,7 @@ import LogoSvg from '@/assets/logo.svg?inline'
   components: { LogoSvg }
 })
 export default class LogoComponent extends Vue {
-  @Prop({ type: String, default: 'Ant Design Pro', required: false })
+  @Prop({ type: String, default: 'Example Pro', required: false })
   private title!: string
   @Prop({ type: Boolean, default: true, required: false })
   private showTitle!: string
