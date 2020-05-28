@@ -1,43 +1,43 @@
 <template>
   <a-card :bordered="false">
     <div class="table-page-search-wrapper">
-      <a-form-model layout="inline" :rules="rules">
+      <a-form-model v-model="listQuery" layout="inline" :rules="rules">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="账号">
+            <a-form-model-item label="账号">
               <a-input
                 v-model="listQuery.username"
                 placeholder="请输入账号模糊查询"
               />
-            </a-form-item>
+            </a-form-model-item>
           </a-col>
           <a-col :md="8" :sm="24">
-            <a-form-item label="手机号">
+            <a-form-model-item label="手机号码">
               <a-input
                 v-model="listQuery.mobile"
                 placeholder="请输入手机号模糊查询"
               />
-            </a-form-item>
+            </a-form-model-item>
           </a-col>
           <template v-if="expand">
             <a-col :md="8" :sm="24">
-              <a-form-item label="真实姓名">
+              <a-form-model-item label="真实姓名">
                 <a-input
                   v-model="listQuery.realName"
                   placeholder="请输入真实名称"
                 />
-              </a-form-item>
+              </a-form-model-item>
             </a-col>
             <a-col :md="8" :sm="24">
-              <a-form-item label="工号">
+              <a-form-model-item label="工号">
                 <a-input
                   v-model="listQuery.workNo"
                   placeholder="请输入工号模糊查询"
                 />
-              </a-form-item>
+              </a-form-model-item>
             </a-col>
             <a-col :md="8" :sm="24">
-              <a-form-item label="可用状态">
+              <a-form-model-item label="可用状态">
                 <a-select
                   default-value=""
                   v-model="listQuery.enable"
@@ -51,11 +51,11 @@
                     {{ item.name }}</a-select-option
                   >
                 </a-select>
-              </a-form-item>
+              </a-form-model-item>
             </a-col>
 
             <a-col :md="8" :sm="24">
-              <a-form-item label="锁定状态">
+              <a-form-model-item label="锁定状态">
                 <a-select
                   default-value=""
                   v-model="listQuery.locked"
@@ -69,7 +69,7 @@
                     {{ item.name }}</a-select-option
                   >
                 </a-select>
-              </a-form-item>
+              </a-form-model-item>
             </a-col>
           </template>
           <a-col :md="(!expand && 8) || 24" :sm="24">
@@ -94,22 +94,21 @@
       <a-button type="primary" icon="plus" @click="onAddClick">
         添加用户
       </a-button>
-      <a-button type="primary" icon="import">
-        导入
-      </a-button>
-      <a-button type="primary" icon="export">
+      <excel-upload name="syUser" :on-success="onExcelSuccess"></excel-upload>
+      <a-button type="primary" icon="export" @click="exportExcel">
         导出
       </a-button>
     </div>
 
     <a-table
+      :pagination="pagination"
       :columns="columns"
       :data-source="tableData"
       :bordered="true"
       :loading="loading"
       :row-key="record => record.id"
       @change="handleTableChange"
-      :scroll="{ x: 1500 }"
+      :scroll="{ x: 1800 }"
     >
       <a slot="name" slot-scope="text">{{ text }}</a>
 
@@ -146,6 +145,10 @@
         </a-tag>
       </span>
 
+      <span slot="createAt" slot-scope="createAt">
+        {{ createAt | timeFormatter }}
+      </span>
+
       <span slot="action" slot-scope="record">
         <a-dropdown>
           <a class="ant-dropdown-link" @click="e => e.preventDefault()">
@@ -162,9 +165,6 @@
               <a href="javascript:;" @click="onPasswordClick(record)">密码</a>
             </a-menu-item>
             <a-menu-item>
-              <a href="javascript:;" @click="onLockClick(record)">冻结</a>
-            </a-menu-item>
-            <a-menu-item>
               <a href="javascript:;" @click="onDeleteClick(record)">删除</a>
             </a-menu-item>
           </a-menu>
@@ -174,17 +174,53 @@
     <details-drawer
       :visible="detailsVisible"
       :type="drawerType"
-      :userId="selectedId"
+      :selectedKey="selectedKey"
       @close="onDrawerClosed"
+      @on-edit-success="onEditSuccess"
+      @on-add-success="onAddSuccess"
     >
     </details-drawer>
+    <a-modal
+      title="修改密码"
+      :visible="passwordVisible"
+      :confirm-loading="passwordLoading"
+      @ok="handlePasswordOk"
+      @cancel="handlePasswordCancel"
+    >
+      <a-form-model
+        ref="passwordForm"
+        :model="passwordForm"
+        :rules="passwordRules"
+        :labelCol="{ span: 6 }"
+        :wrapperCol="{ span: 14 }"
+      >
+        <a-form-model-item label="密码" prop="password">
+          <a-input-password
+            v-model="passwordForm.password"
+            placeholder="请输入密码"
+            autocomplete="off"
+          />
+        </a-form-model-item>
+        <a-form-model-item label="确认密码" prop="rPassword">
+          <a-input-password
+            v-model="passwordForm.rPassword"
+            placeholder="请再次输入密码"
+            autocomplete="off"
+          />
+        </a-form-model-item>
+      </a-form-model>
+    </a-modal>
   </a-card>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { fetchList } from '@/api/user'
+import { fetchList, password, remove } from '@/api/user'
+import { downloadExcel } from '@/api/excel'
 import DetailsDrawer from './DetailsDrawer.vue'
+import md5 from 'md5'
+import { Form } from 'ant-design-vue'
+import ExcelUpload from '@/components/Upload/ExcelUpload.vue'
 const defaultListQuery = {
   username: null,
   mobile: null,
@@ -195,14 +231,21 @@ const defaultListQuery = {
   current: 1,
   size: 10
 }
+
+const defaultPasswordForm = {
+  password: '',
+  rPassword: ''
+}
 @Component({
   name: 'UserTableLIst',
   components: {
-    DetailsDrawer
+    DetailsDrawer,
+    ExcelUpload
   }
 })
 export default class extends Vue {
   private listQuery = Object.assign({}, defaultListQuery)
+  private passwordForm = Object.assign({}, defaultPasswordForm)
   private labelCol = { span: 4 }
   private wrapperCol = { span: 14 }
   private expand = false
@@ -225,6 +268,19 @@ export default class extends Vue {
         min: 11,
         max: 11,
         message: '长度在 6 到 20 个字符',
+        trigger: 'blur'
+      }
+    ]
+  }
+  private passwordRules = {
+    password: [
+      { required: true, message: '请输入密码', trigger: 'blur' },
+      { min: 6, max: 20, message: '长度在6-20之间', trigger: 'blur' }
+    ],
+    rPassword: [
+      { required: true, message: '请再次输入密码', trigger: 'blur' },
+      {
+        validator: this.validPass,
         trigger: 'blur'
       }
     ]
@@ -292,6 +348,12 @@ export default class extends Vue {
       width: 90
     },
     {
+      title: '创建时间',
+      dataIndex: 'createAt',
+      scopedSlots: { customRender: 'createAt' },
+      width: 190
+    },
+    {
       title: '操作',
       key: 'operation',
       fixed: 'right',
@@ -299,11 +361,22 @@ export default class extends Vue {
       scopedSlots: { customRender: 'action' }
     }
   ]
+
+  private pagination = {
+    showSizeChanger: true,
+    pageSizeOptions: ['10', '20', '50', '100'],
+    showQuickJumper: true,
+    showLessItems: true,
+    total: 0
+  }
   private tableData = []
 
   private drawerType = ''
 
-  private selectedId = null
+  private selectedKey: string | null = null
+
+  private passwordVisible = false
+  private passwordLoading = false
   //lifecyle
   private created() {
     this.fetch()
@@ -322,12 +395,17 @@ export default class extends Vue {
   private handleResetSearch() {
     this.listQuery = Object.assign({}, defaultListQuery)
   }
-  private handleTableChange() {}
+  private handleTableChange(pagination: any) {
+    this.listQuery.current = pagination.current
+    this.listQuery.size = pagination.pageSize
+    this.fetch()
+  }
   private fetch() {
     this.loading = true
     fetchList(this.listQuery)
       .then((response: any) => {
         this.tableData = response.records
+        this.pagination.total = response.total
       })
       .catch((err: any) => {
         console.log(err)
@@ -339,29 +417,117 @@ export default class extends Vue {
   private onDetailsClick(val: any) {
     this.drawerType = 'INFO'
     this.detailsVisible = !this.detailsVisible
-    this.selectedId = val.id
+    this.selectedKey = val.id
   }
   private onEditClick(val: any) {
+    console.log(val)
     this.drawerType = 'EDIT'
     this.detailsVisible = !this.detailsVisible
-    this.selectedId = val.id
+    this.selectedKey = val.id
+  }
+
+  private onEditSuccess(val: any) {
+    const newData = [...this.tableData]
+    const target = newData.filter(
+      (item: any) => this.selectedKey === item.id
+    )[0] as any
+
+    if (target) {
+      Object.assign(target, val)
+      this.tableData = newData
+    }
+  }
+
+  private onAddSuccess(val: any) {
+    this.listQuery.current = 1
+    this.fetch()
   }
 
   private onPasswordClick(val: any) {
-    this.selectedId = val.id
-  }
-  private onLockClick(val: any) {
-    this.selectedId = val.id
+    this.passwordVisible = true
+    this.selectedKey = val.id
   }
   private onDeleteClick(val: any) {
-    this.selectedId = val.id
+    let that = this
+    this.$confirm({
+      title: '确定要删除该用户吗?',
+      onOk() {
+        return remove(val.id).then(() => {
+          that.$notification.success({
+            message: '成功',
+            description: '删除用户成功'
+          })
+          that.fetch()
+        })
+      }
+    })
   }
   private onDrawerClosed(val: boolean) {
     this.detailsVisible = val
   }
   private onAddClick() {
     this.drawerType = 'ADD'
+    this.selectedKey = null
     this.detailsVisible = true
+  }
+
+  handlePasswordOk(e: any) {
+    this.passwordLoading = true
+
+    let el: any = this.$refs.passwordForm
+    el.validate((valid: boolean) => {
+      if (valid) {
+        let pass = md5(this.passwordForm.password!)
+        password(this.selectedKey as string, { password: pass })
+          .then(() => {
+            this.$notification.success({
+              message: '成功',
+              description: '修改密码成功'
+            })
+            this.passwordVisible = false
+          })
+          .finally(() => {
+            this.passwordLoading = false
+          })
+      } else {
+        console.log('error submit!!')
+        return false
+      }
+    })
+    // setTimeout(() => {
+    //   this.passwordVisible = false
+    //   this.passwordLoading = false
+    // }, 2000)
+  }
+
+  handlePasswordCancel(e: any) {
+    if (!this.passwordLoading) {
+      this.passwordForm = Object.assign({}, defaultPasswordForm)
+      this.passwordVisible = false
+    }
+  }
+  exportExcel() {
+    downloadExcel({ name: 'syUser' }).then((res: any) => {
+      console.log(res)
+      let blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+      let url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a') // 创建a标签
+      link.href = url
+      link.download = '用户信息.xlsx' // 重命名文件
+      link.click()
+      URL.revokeObjectURL(url)
+    })
+  }
+
+  validPass(rule: any, value: any, callback: any) {
+    if (value !== this.passwordForm.password) {
+      callback(new Error('两次输入的密码不一致'))
+    } else {
+      callback()
+    }
+  }
+  onExcelSuccess() {
+    this.fetch()
   }
 }
 </script>

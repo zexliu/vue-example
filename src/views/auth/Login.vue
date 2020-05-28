@@ -258,7 +258,7 @@ export default class Login extends Vue {
       (err: any, values: any) => {
         if (!err) {
           const loginReq = { ...values, grant_type: this.customActiveKey }
-          // loginReq.password = md5(loginReq.password)
+          loginReq.password = md5(loginReq.password)
           Login(loginReq)
             .then((res: any) => this.loginSuccess(res))
             .catch((err: any) => this.requestFailed(err))
@@ -386,9 +386,7 @@ export default class Login extends Vue {
   }
 
   private requestFailed(err: any) {
-    this.erroeMessage =
-      ((err.response || {}).data || {}).error_description ||
-      '请求出现错误，请稍后再试'
+    this.erroeMessage = err.error_description || '请求出现错误，请稍后再试'
     console.log(err.response)
     this.$notification.error({
       message: '错误',

@@ -21,13 +21,17 @@ const err = (error: any) => {
   if (error.response) {
     const data = error.response.data
     const token = Vue.ls.get(REFRESH_TOKEN)
-    if (error.response.status === 403) {
+    if (error.response.status === 400) {
+      notification.error({
+        message: '参数错误',
+        description: data.message
+      })
+    } else if (error.response.status === 403) {
       notification.error({
         message: 'Forbidden',
         description: data.message
       })
-    }
-    if (error.response.status === 401) {
+    } else if (error.response.status === 401) {
       notification.error({
         message: 'Unauthorized',
         description: 'Authorization verification failed'
@@ -36,6 +40,7 @@ const err = (error: any) => {
         logout()
       }
     }
+    return Promise.reject(data)
   }
   return Promise.reject(error)
 }

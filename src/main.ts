@@ -9,7 +9,7 @@ import bootstrap from './core/bootstrap'
 import './core/lazy_use'
 import './components/global.less'
 import './permission' // permission control
-
+import './filters/index'
 Vue.config.productionTip = false
 
 // mount axios Vue.$http and this.$http

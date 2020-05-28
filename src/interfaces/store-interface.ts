@@ -17,7 +17,7 @@ export interface IAppState {
 export interface IUserState {
   accessToken: string
   refreshToken: string
-  name: string
+  nickname: string
   welcome: string
   avatar: string
   roles: any[]

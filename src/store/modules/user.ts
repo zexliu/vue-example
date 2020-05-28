@@ -21,8 +21,8 @@ const mutations: MutationTree<IUserState> = {
   SET_REFRESH_TOKEN: (state: IUserState, refreshToken) => {
     state.refreshToken = refreshToken
   },
-  SET_NAME: (state: IUserState, { name, welcome }) => {
-    state.name = name
+  SET_NICKNAME: (state: IUserState, { nickname, welcome }) => {
+    state.nickname = nickname
     state.welcome = welcome
   },
   SET_AVATAR: (state: IUserState, avatar) => {
@@ -82,11 +82,13 @@ const actions: ActionTree<IUserState, RootState> = {
     return new Promise((resolve, reject) => {
       getInfo()
         .then((res: any) => {
+          console.log(res)
+          console.log(res.roles.length)
           if (res.roles.length > 0) {
             const roles = res.roles
             const permissions: any[] = []
             roles.map((role: any) => {
-              if (role.permissions.length > 0) {
+              if (role.permissions && role.permissions.length > 0) {
                 permissions.push(role.permissions)
               }
             })
@@ -96,8 +98,12 @@ const actions: ActionTree<IUserState, RootState> = {
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
+
           context.commit('SET_ID', res.id)
-          context.commit('SET_NAME', { name: res.nickname, welcome: welcome() })
+          context.commit('SET_NICKNAME', {
+            name: res.nickname,
+            welcome: welcome()
+          })
           context.commit('SET_AVATAR', res.avatar)
 
           resolve(res)
@@ -114,12 +120,13 @@ const actions: ActionTree<IUserState, RootState> = {
       context.commit('SET_PERMISSIONS', [])
       context.commit('SET_INFO', null)
       context.commit('SET_ID', null)
-      context.commit('SET_NAME', null)
+      context.commit('SET_NICKNAME', {})
       context.commit('SET_AVATAR', null)
       context.commit('SET_ACCESS_TOKEN', null)
       context.commit('SET_REFRESH_TOKEN', null)
       Vue.ls.remove(ACCESS_TOKEN)
       Vue.ls.remove(REFRESH_TOKEN)
+      resolve()
     })
   }
 }
@@ -128,7 +135,7 @@ const getters: GetterTree<IUserState, RootState> = {
   accessToken: state => state.accessToken,
   refreshToken: state => state.refreshToken,
   avatar: state => state.avatar,
-  nickname: state => state.name,
+  nickname: state => state.nickname,
   welcome: state => state.welcome,
   roles: state => state.roles,
   userInfo: state => state.info
@@ -138,7 +145,7 @@ const userState: IUserState = {
   id: '',
   accessToken: '',
   refreshToken: '',
-  name: '',
+  nickname: '',
   welcome: '',
   avatar: '',
   roles: [],
