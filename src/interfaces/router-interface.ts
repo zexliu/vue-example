@@ -2,7 +2,7 @@ export interface CustomRouteConfig {
   key?: string
   name?: string
   path: string
-  component?: string
+  component?: string | any
 
   redirect?: string
 

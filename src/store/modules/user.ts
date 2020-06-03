@@ -98,7 +98,6 @@ const actions: ActionTree<IUserState, RootState> = {
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
-
           context.commit('SET_ID', res.id)
           context.commit('SET_NICKNAME', {
             name: res.nickname,

@@ -1,192 +1,135 @@
-// import * as loginService from '@/api/login'
-// import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
-// import { CustomRouteConfig } from '@/interfaces/router-interface'
+import { getMenus } from '@/api/user'
+import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
+import { CustomRouteConfig } from '@/interfaces/router-interface'
+import { bxAnaalyse } from '@/core/icons'
 
-// // 前端路由表
-// const constantRouterComponents: any = {
-//   // 基础页面 layout 必须引入
-//   BasicLayout: BasicLayout,
-//   BlankLayout: BlankLayout,
-//   PageView: PageView,
-//   RouteView: RouteView,
-//   '403': () =>
-//     import(/* webpackChunkName: "error" */ '@/views/exception/403.vue'),
-//   '404': () =>
-//     import(/* webpackChunkName: "error" */ '@/views/exception/404.vue'),
-//   '500': () =>
-//     import(/* webpackChunkName: "error" */ '@/views/exception/500.vue'),
+const constantMenuIcons: any = {
+  bxAnaalyse: bxAnaalyse
+}
+// 前端路由表
+const constantRouterComponents: any = {
+  // 基础页面 layout 必须引入
+  BasicLayout: BasicLayout,
+  BlankLayout: BlankLayout,
+  PageView: PageView,
+  RouteView: RouteView,
+  '403': () =>
+    import(/* webpackChunkName: "error" */ '@/views/exception/403.vue'),
+  '404': () =>
+    import(/* webpackChunkName: "error" */ '@/views/exception/404.vue'),
+  '500': () =>
+    import(/* webpackChunkName: "error" */ '@/views/exception/500.vue'),
 
-//   // dashboard
-//   Workplace: () =>
-//     import(
-//       /* webpackChunkName: "dashboard" */ '@/views/dashboard/Workplace.vue'
-//     ),
-//   Analysis: () =>
-//     import(
-//       /* webpackChunkName: "dashboard" */ '@/views/dashboard/Analysis.vue'
-//     ),
-//   TestWork: () =>
-//     import(
-//       /* webpackChunkName: "dashboard" */ '@/views/dashboard/TestWork.vue'
-//     ),
+  // dashboard
+  workSpace: () =>
+    import(
+      /* webpackChunkName: "dashboard" */ '@/views/dashboard/WorkSpace.vue'
+    ),
+  systemUser: () =>
+    import(/* webpackChunkName: "system" */ '@/views/system/user/Index.vue'),
+  systemRole: () =>
+    import(/* webpackChunkName: "system" */ '@/views/system/role/Index.vue'),
+  systemDept: () =>
+    import(/* webpackChunkName: "system" */ '@/views/system/dept/Index.vue'),
+  systemPermission: () =>
+    import(
+      /* webpackChunkName: "system" */ '@/views/system/permission/Index.vue'
+    ),
+  systemMenu: () =>
+    import(/* webpackChunkName: "system" */ '@/views/system/menu/Index.vue'),
+  systemDict: () =>
+    import(/* webpackChunkName: "system" */ '@/views/system/dict/Index.vue'),
+  // exception
+  exception403: () =>
+    import(/* webpackChunkName: "fail" */ '@/views/exception/403.vue'),
+  exception404: () =>
+    import(/* webpackChunkName: "fail" */ '@/views/exception/404.vue'),
+  exception500: () =>
+    import(/* webpackChunkName: "fail" */ '@/views/exception/500.vue')
+}
 
-//   // form
-//   BasicForm: () =>
-//     import(/* webpackChunkName: "form" */ '@/views/form/BasicForm.vue'),
-//   StepForm: () =>
-//     import(/* webpackChunkName: "form" */ '@/views/form/stepForm/StepForm.vue'),
-//   AdvanceForm: () =>
-//     import(
-//       /* webpackChunkName: "form" */ '@/views/form/advancedForm/AdvancedForm.vue'
-//     ),
+// 前端未找到页面路由（固定不用改）
+const notFoundRouter: CustomRouteConfig = {
+  path: '*',
+  redirect: '/404',
+  hidden: true
+}
 
-//   // list
-//   TableList: () =>
-//     import(/* webpackChunkName: "list" */ '@/views/list/TableList.vue'),
-//   StandardList: () =>
-//     import(/* webpackChunkName: "list" */ '@/views/list/StandardList.vue'),
-//   CardList: () =>
-//     import(/* webpackChunkName: "list" */ '@/views/list/CardList.vue'),
-//   SearchLayout: () =>
-//     import(
-//       /* webpackChunkName: "SearchList" */ '@/views/list/search/SearchLayout.vue'
-//     ),
-//   SearchArticles: () =>
-//     import(
-//       /* webpackChunkName: "SearchList" */ '@/views/list/search/Article.vue'
-//     ),
-//   SearchProjects: () =>
-//     import(
-//       /* webpackChunkName: "SearchList" */ '@/views/list/search/Projects.vue'
-//     ),
-//   SearchApplications: () =>
-//     import(
-//       /* webpackChunkName: "SearchList" */ '@/views/list/search/Applications.vue'
-//     ),
+// 根级菜单
+const rootRouter: CustomRouteConfig = {
+  key: 'Index',
+  name: 'Index',
+  path: '/',
+  component: BasicLayout,
+  redirect: '/dashboard',
+  meta: {
+    title: '首页'
+  },
+  children: []
+}
 
-//   // profile
-//   ProfileBasic: () =>
-//     import(/* webpackChunkName: "profile" */ '@/views/profile/basic/Index.vue'),
-//   ProfileAdvanced: () =>
-//     import(
-//       /* webpackChunkName: "profile" */ '@/views/profile/advanced/Advanced.vue'
-//     ),
+/**
+ * 动态生成菜单
+ * @param token
+ * @returns {Promise<Router>}
+ */
+export const generatorDynamicRouter = () => {
+  return new Promise((resolve, reject) => {
+    getMenus()
+      .then((res: any) => {
+        const routers = generator(res)
+        rootRouter.children = routers
+        const menuNav = []
+        menuNav.push(rootRouter)
+        menuNav.push(notFoundRouter)
+        resolve(menuNav)
+      })
+      .catch(e => {
+        reject(e)
+      })
 
-//   // result
-//   ResultSuccess: () =>
-//     import(/* webpackChunkName: "result" */ '@/views/result/Success.vue'),
-//   ResultFail: () =>
-//     import(/* webpackChunkName: "result" */ '@/views/result/Error.vue'),
+    // loginService
+    //   .getCurrentUserNav(token)
+    //   .then((res: any) => {
+    //     const { result } = res
+    //     const menuNav: any[] = []
+    //     const childrenNav: any[] = []
+    //     //      后端数据, 根级树数组,  根级 PID
+    //     listToTree(result, childrenNav, 0)
+    //     rootRouter.children = childrenNav
+    //     menuNav.push(rootRouter)
+    //     console.log('menuNav', menuNav)
+    //     const routers = generator(menuNav)
+    //     routers.push(notFoundRouter)
+    //     console.log('routers', routers)
+    //     resolve(routers)
+    //   })
+    //   .catch((err: any) => {
+    //     reject(err)
+    //   })
+  })
+}
 
-//   // exception
-//   Exception403: () =>
-//     import(/* webpackChunkName: "fail" */ '@/views/exception/403.vue'),
-//   Exception404: () =>
-//     import(/* webpackChunkName: "fail" */ '@/views/exception/404.vue'),
-//   Exception500: () =>
-//     import(/* webpackChunkName: "fail" */ '@/views/exception/500.vue'),
-
-//   // personal
-//   PersonalCenter: () =>
-//     import(
-//       /* webpackChunkName: "personal" */ '@/views/personal/center/Index.vue'
-//     ),
-//   PersonalSettings: () =>
-//     import(
-//       /* webpackChunkName: "personal" */ '@/views/personal/settings/Index.vue'
-//     ),
-//   BaseSettings: () =>
-//     import(
-//       /* webpackChunkName: "personal" */ '@/views/personal/settings/BaseSetting.vue'
-//     ),
-//   SecuritySettings: () =>
-//     import(
-//       /* webpackChunkName: "personal" */ '@/views/personal/settings/Security.vue'
-//     ),
-//   CustomSettings: () =>
-//     import(
-//       /* webpackChunkName: "personal" */ '@/views/personal/settings/Custom.vue'
-//     ),
-//   BindingSettings: () =>
-//     import(
-//       /* webpackChunkName: "personal" */ '@/views/personal/settings/Binding.vue'
-//     ),
-//   NotificationSettings: () =>
-//     import(
-//       /* webpackChunkName: "personal" */ '@/views/personal/settings/Notification.vue'
-//     ),
-
-//   // other
-//   TestIconSelect: () =>
-//     import(
-//       /* webpackChunkName: "TestIconSelect" */ '@/views/other/IconSelectorView.vue'
-//     ),
-//   TreeList: () =>
-//     import(/* webpackChunkName: "OtherList" */ '@/views/other/TreeList.vue'),
-//   EditList: () =>
-//     import(
-//       /* webpackChunkName: "OtherList" */ '@/views/other/TableInnerEditList.vue'
-//     ),
-//   UserList: () =>
-//     import(/* webpackChunkName: "OtherList" */ '@/views/other/UserList.vue'),
-//   RoleList: () =>
-//     import(/* webpackChunkName: "OtherList" */ '@/views/other/RoleList.vue'),
-//   SystemRole: () =>
-//     import(/* webpackChunkName: "OtherList" */ '@/views/role/RoleList.vue'),
-//   PermissionList: () =>
-//     import(
-//       /* webpackChunkName: "OtherList" */ '@/views/other/PermissionList.vue'
-//     )
-// }
-
-// // 前端未找到页面路由（固定不用改）
-// const notFoundRouter: CustomRouteConfig = {
-//   path: '*',
-//   redirect: '/404',
-//   hidden: true
-// }
-
-// // 根级菜单
-// const rootRouter: CustomRouteConfig = {
-//   key: '',
-//   name: 'index',
-//   path: '',
-//   component: 'BasicLayout',
-//   redirect: '/dashboard',
-//   meta: {
-//     title: '首页'
-//   },
-//   children: []
-// }
-
-// /**
-//  * 动态生成菜单
-//  * @param token
-//  * @returns {Promise<Router>}
-//  */
-// export const generatorDynamicRouter = (token: any) => {
-//   return new Promise((resolve, reject) => {
-//     loginService
-//       .getCurrentUserNav(token)
-//       .then((res: any) => {
-//         const { result } = res
-//         const menuNav: any[] = []
-//         const childrenNav: any[] = []
-//         //      后端数据, 根级树数组,  根级 PID
-//         listToTree(result, childrenNav, 0)
-//         rootRouter.children = childrenNav
-//         menuNav.push(rootRouter)
-//         console.log('menuNav', menuNav)
-//         const routers = generator(menuNav)
-//         routers.push(notFoundRouter)
-//         console.log('routers', routers)
-//         resolve(routers)
-//       })
-//       .catch((err: any) => {
-//         reject(err)
-//       })
-//   })
-// }
+export const generator = (routerMap: any[], parent?: any) => {
+  return routerMap.map((item: any) => {
+    const currentRouter: CustomRouteConfig = {
+      path: item.menuPath,
+      name: item.menuCode,
+      component:
+        constantRouterComponents[item.component] ||
+        (() => import(`@/views/${item.component}`)),
+      hidden: item.hidden ? item.hidden : false,
+      meta: {
+        title: item.menuName,
+        icon: constantMenuIcons[item.menuIcon] || item.menuIcon || null
+      }
+    }
+    if (item.children && item.children.length > 0) {
+      currentRouter.children = generator(item.children, currentRouter)
+    }
+    return currentRouter
+  })
+}
 
 // /**
 //  * 格式化树形结构数据 生成 vue-router 层级路由表

@@ -20,7 +20,7 @@ import Radar from '@/components/Charts/Radar.vue'
 // import NumberInfo from '@/components/NumberInfo';
 import DescriptionList from '@/components/DescriptionList'
 // import DescriptionListItem from '@/components/DescriptionList/DescriptionListItem.vue';
-// import Tree from '@/components/Tree/Tree';
+import Tree from '@/components/Tree/Tree'
 // import Trend from '@/components/Trend';
 // import MultiTab from '@/components/MultiTab';
 // import Result from '@/components/Result';
@@ -52,7 +52,7 @@ export {
   // NumberInfo,
   DescriptionList,
   // DescriptionListItem,
-  // Tree,
+  Tree,
   // STable,
   // MultiTab,
   // Result,

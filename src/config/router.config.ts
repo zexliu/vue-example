@@ -43,17 +43,69 @@ export const asyncRouterMap = [
         name: 'System',
         component: PageView,
         redirect: '/system/user',
-        meta: { title: '权限系统', icon: 'system' },
+        meta: { title: '系统管理', icon: 'setting' },
         children: [
           {
             path: '/system/user',
             name: 'UserManage',
             component: () =>
               import(
-                /* webpackChunkName: "list" */ '@/views/system/user/Table.vue'
+                /* webpackChunkName: "list" */ '@/views/system/user/Index.vue'
               ),
             meta: {
               title: '用户管理',
+              keepAlive: true,
+              roles: ['ADMIN']
+            }
+          },
+          {
+            path: '/system/role',
+            name: 'RoleManage',
+            component: () =>
+              import(
+                /* webpackChunkName: "list" */ '@/views/system/role/Index.vue'
+              ),
+            meta: {
+              title: '角色管理',
+              keepAlive: true,
+              roles: ['ADMIN']
+            }
+          },
+          {
+            path: '/system/dept',
+            name: 'DeptManage',
+            component: () =>
+              import(
+                /* webpackChunkName: "list" */ '@/views/system/dept/Index.vue'
+              ),
+            meta: {
+              title: '部门管理',
+              keepAlive: true,
+              roles: ['ADMIN']
+            }
+          },
+          {
+            path: '/system/permission',
+            name: 'PermissionManage',
+            component: () =>
+              import(
+                /* webpackChunkName: "list" */ '@/views/system/permission/Index.vue'
+              ),
+            meta: {
+              title: '权限管理',
+              keepAlive: true,
+              roles: ['ADMIN']
+            }
+          },
+          {
+            path: '/system/menu',
+            name: 'MenuManage',
+            component: () =>
+              import(
+                /* webpackChunkName: "list" */ '@/views/system/menu/Index.vue'
+              ),
+            meta: {
+              title: '菜单管理',
               keepAlive: true,
               roles: ['ADMIN']
             }

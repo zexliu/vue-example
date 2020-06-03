@@ -1,13 +1,4 @@
-import {
-  Component,
-  Prop,
-  Vue,
-  Watch,
-  Emit,
-  Provide,
-  Inject,
-  Mixins
-} from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { deviceEnquire, DEVICE_TYPE } from '@/utils/device'
 import { State, Action, Getter } from 'vuex-class'
 

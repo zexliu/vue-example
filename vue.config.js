@@ -30,6 +30,7 @@ const assetsCDN = {
 const vueConfig = {
   configureWebpack: {
     // webpack plugins
+    devtool: 'source-map',
     plugins: [
       // Ignore all locale files of moment.js
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)

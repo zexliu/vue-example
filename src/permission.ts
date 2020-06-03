@@ -32,7 +32,9 @@ router.beforeEach((to, from, next) => {
             store.dispatch('permission/GenerateRoutes', { roles }).then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表
+              console.log('addRouters', store.getters['permission/addRouters'])
               router.addRoutes(store.getters['permission/addRouters'])
+              console.log('router', router)
               const redirect = decodeURIComponent(
                 <string>from.query.redirect || to.path
               )

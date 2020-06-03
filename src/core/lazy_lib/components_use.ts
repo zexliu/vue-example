@@ -15,6 +15,7 @@ import {
   Radio,
   Checkbox,
   Select,
+  TreeSelect,
   Card,
   Form,
   FormModel,
@@ -23,6 +24,7 @@ import {
   Modal,
   Table,
   Tabs,
+  Tree,
   Icon,
   Badge,
   Popover,
@@ -40,9 +42,11 @@ import {
   Divider,
   DatePicker,
   TimePicker,
+  Cascader,
   Upload,
   Progress,
   Skeleton,
+  Empty,
   Popconfirm,
   message,
   notification
@@ -57,6 +61,7 @@ Vue.use(Switch)
 Vue.use(Radio)
 Vue.use(Checkbox)
 Vue.use(Select)
+Vue.use(TreeSelect)
 Vue.use(Card)
 Vue.use(Form)
 Vue.use(FormModel)
@@ -65,6 +70,7 @@ Vue.use(Col)
 Vue.use(Modal)
 Vue.use(Table)
 Vue.use(Tabs)
+Vue.use(Tree)
 Vue.use(Icon)
 Vue.use(Badge)
 Vue.use(Popover)
@@ -82,9 +88,11 @@ Vue.use(Tag)
 Vue.use(Divider)
 Vue.use(DatePicker)
 Vue.use(TimePicker)
+Vue.use(Cascader)
 Vue.use(Upload)
 Vue.use(Progress)
 Vue.use(Skeleton)
+Vue.use(Empty)
 Vue.use(Popconfirm)
 Vue.use(notification)
 

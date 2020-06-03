@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Menu from 'ant-design-vue/es/menu'
 import Icon from 'ant-design-vue/es/icon'
@@ -141,7 +142,7 @@ export default class SMenuComponent extends Vue {
     )
   }
   renderIcon(icon: any) {
-    if (icon === 'none' || icon === undefined) {
+    if (icon === 'none' || icon === undefined || icon === null ||  icon === '') {
       return null
     }
     const props: any = {}

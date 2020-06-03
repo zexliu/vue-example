@@ -7,37 +7,6 @@ export function getInfo() {
   })
 }
 
-export function fetchList(params: any) {
-  return axios({
-    url: 'api/v1/users',
-    method: 'get',
-    params: params
-  })
-}
-
-export function create(data: any) {
-  return axios({
-    url: 'api/v1/users',
-    method: 'post',
-    data
-  })
-}
-
-export function update(id: string, data: any) {
-  return axios({
-    url: 'api/v1/users/' + id,
-    method: 'put',
-    data
-  })
-}
-
-export function details(id: string) {
-  return axios({
-    url: 'api/v1/users/' + id,
-    method: 'get'
-  })
-}
-
 export function password(id: string, params: any) {
   return axios({
     url: 'api/v1/users/' + id + '/password',
@@ -46,9 +15,9 @@ export function password(id: string, params: any) {
   })
 }
 
-export function remove(id: string) {
+export function getMenus() {
   return axios({
-    url: 'api/v1/users/' + id,
-    method: 'delete'
+    url: '/api/v1/menus/tree/self',
+    method: 'get'
   })
 }
