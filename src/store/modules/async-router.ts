@@ -19,7 +19,6 @@ const mutations: MutationTree<IPermission> = {
 const actions: ActionTree<IPermission, RootState> = {
   GenerateRoutes({ commit }, data) {
     return new Promise(resolve => {
-      const { token } = data
       generatorDynamicRouter().then((routers: any) => {
         commit('SET_ROUTERS', routers)
         resolve()
@@ -37,7 +36,7 @@ const state: IPermission = {
   addRouters: []
 }
 
-const asyncRouter: Module<IPermission, RootState> = {
+const permission: Module<IPermission, RootState> = {
   namespaced: true,
   state: state,
   getters: getters,
@@ -45,4 +44,4 @@ const asyncRouter: Module<IPermission, RootState> = {
   mutations: mutations
 }
 
-export default asyncRouter
+export default permission
