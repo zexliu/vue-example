@@ -142,10 +142,9 @@
               <a-form-model-item label="过期时间">
                 <!-- v-model="formData.expireAt" -->
                 <a-date-picker
-                  valueFormat="x"
                   :showTime="true"
                   :disabled="type === 'INFO'"
-                  v-model="formData.expireAt"
+                  v-model="formData.expireAtMoment"
                 />
               </a-form-model-item>
               <a-form-model-item label="锁定状态">
@@ -222,7 +221,8 @@ interface UserReq {
   gender: string
   birthDay: string | null
   enable: boolean
-  expireAt: any
+  expireAt: string | null
+  expireAtMoment: any
   locked: boolean
   deptIds: string[]
   roleIds: string[]
@@ -242,6 +242,7 @@ const defaultForm: UserReq = {
   birthDay: null,
   enable: true,
   expireAt: null,
+  expireAtMoment: null,
   locked: false,
   deptIds: [],
   roleIds: []
@@ -310,9 +311,12 @@ export default class DetailsDrawer extends Mixins(MixinDetails) {
   }
 
   protected onLoadDataSuccess() {
-    this.formData.expireAt = this.formData.expireAt
-      ? moment(this.formData.expireAt)
-      : null
+    this.$set(
+      this.formData,
+      'expireAtMoment',
+      this.formData.expireAt ? moment(this.formData.expireAt, 'x') : null
+    )
+    console.log(this.formData)
   }
 
   protected resetFormData() {
@@ -322,6 +326,7 @@ export default class DetailsDrawer extends Mixins(MixinDetails) {
   protected beforeAddData() {
     this.formData.password = md5(this.formData.password!)
     this.formData.rPassword = this.formData.password
+    this.beforeEditData()
   }
 
   protected afterAddData() {
@@ -329,11 +334,10 @@ export default class DetailsDrawer extends Mixins(MixinDetails) {
     this.formData.rPassword = null
   }
   protected beforeEditData() {
-    if (
-      this.formData.expireAt != null &&
-      this.formData.expireAt instanceof Object
-    ) {
-      this.formData.expireAt = this.formData.expireAt.format('x')
+    if (this.formData.expireAtMoment != null) {
+      this.formData.expireAt = this.formData.expireAtMoment.format('x')
+    } else {
+      this.formData.expireAt = null
     }
   }
   private created() {
